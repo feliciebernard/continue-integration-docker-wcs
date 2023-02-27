@@ -10,3 +10,28 @@ jobs:
         uses: actions/checkout@v2
       - name: Goto client and run tests
         run: cd client && npm i && npm test
+  docker:
+    # ne s'exécute que si le job test-front est réussi
+    needs: test-front
+    #construire l'image uniquement si on est merge avec main
+    if: github.ref == 'refs/heads/main
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          push: true
+          # ajout du context car absence de dockerfile
+          context: "{{defaultContext}}:server"
+          #id et nom d'app mis à jour
+          tags: felicie/quete1902:latest
+
