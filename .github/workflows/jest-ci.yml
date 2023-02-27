@@ -14,7 +14,7 @@ jobs:
     # ne s'exécute que si le job test-front est réussi
     needs: test-front
     #construire l'image uniquement si on est merge avec main
-    if: github.ref == 'refs/heads/main
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU
